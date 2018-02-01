@@ -1,0 +1,15 @@
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.winter.model
+  
+spring:
+  datasource:
+      name: imdb
+      url: jdbc:mysql://127.0.0.1:3306/imdb
+      username: root
+      password: root
+  session:
+    store-type: none
+
+server:
+  port: 8080
