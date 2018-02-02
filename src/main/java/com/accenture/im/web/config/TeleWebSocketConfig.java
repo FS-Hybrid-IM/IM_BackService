@@ -20,7 +20,7 @@ public class TeleWebSocketConfig extends AbstractWebSocketMessageBrokerConfigure
         //向客户端发送信息时，destination的前缀必须是配置中的topic和teleconference
         config.enableSimpleBroker("/topic","/teleconference");
         //客户端向服务端发起请求时，必须以tele为前缀
-        config.setApplicationDestinationPrefixes("/im-component");
+        config.setApplicationDestinationPrefixes("/tele");
         //服务器向客户端发起一对一信息时，必须以teleconference为前缀
         config.setUserDestinationPrefix("/teleconference/");
     }
