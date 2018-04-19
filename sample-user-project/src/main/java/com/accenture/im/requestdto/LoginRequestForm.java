@@ -1,6 +1,6 @@
 package com.accenture.im.requestdto;
 
-import javax.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotBlank;
 
 
 public class LoginRequestForm {

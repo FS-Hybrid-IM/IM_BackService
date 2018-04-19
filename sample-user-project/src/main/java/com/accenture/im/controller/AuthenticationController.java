@@ -18,7 +18,7 @@ import com.accenture.im.service.LoginService;
 
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public abstract class AuthenticationController {
+public class AuthenticationController {
 
     @Autowired
     private LoginService loginService;
@@ -31,12 +31,11 @@ public abstract class AuthenticationController {
         return loginService.login(loginReq);
     }
 
-    @RequestMapping(value = "/login", method = {RequestMethod.POST})
+    @RequestMapping(value = "/create-user", method = {RequestMethod.POST})
     public void createUser(@RequestBody @Valid CreateUserRequestForm loginReq, Errors errors) {
-    	if (errors.hasErrors()) {
+        if (errors.hasErrors()) {
             throw new BusinessFailureException(errors);
         }
-    	loginService.createUser(loginReq);
+        loginService.createUser(loginReq);
     }
-
 }

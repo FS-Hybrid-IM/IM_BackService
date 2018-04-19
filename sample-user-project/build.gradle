@@ -1,0 +1,170 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath 'net.sf.proguard:proguard-gradle:5.3'
+    classpath 'org.ajoberstar:gradle-git:1.6.0'
+  }
+}
+
+plugins {
+  id 'java'
+  id 'war'
+  id 'eclipse'
+  id 'eclipse-wtp'
+  id 'org.sonarqube' version '2.2.1'
+  id 'com.bmuschko.cargo-base' version '2.2.2'
+  id 'findbugs'
+  id 'checkstyle'
+  id 'jacoco'
+  id 'org.hidetake.ssh' version '2.9.0'
+}
+
+import com.bmuschko.gradle.cargo.convention.Deployable
+import com.bmuschko.gradle.cargo.tasks.remote.CargoRedeployRemote
+
+import org.ajoberstar.grgit.Grgit
+import org.ajoberstar.grgit.Person
+
+import groovy.xml.MarkupBuilder
+import groovy.json.JsonBuilder
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+defaultTasks 'compileJava', 'compileTestJava', 'cleanEclipse', 'eclipse'
+
+group 'com.accenture.im'
+
+version '3.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+tasks.withType(AbstractCompile)*.options*.encoding = 'UTF-8'
+
+ext {
+  versions = [
+    springframework      : '4.3.3.RELEASE',
+    aspectj              : '1.8.9',
+    mybatis              : '3.3.0',
+    mybatisspring        : '1.2.3',
+    slf4j                : '1.7.21',
+    logback              : '1.1.7',
+    commons              : [
+      dbcp: '1.4',
+    ],
+    validationapi        : '1.1.0.Final',
+    hibernatevalidator   : '5.2.4.Final',
+    jackson              : '2.7.3',
+    jacksondatetypejsr310: '2.7.4',
+    servlet              : '3.1.0',
+    mysqljavaconnector   : '5.1.38',
+    guava                : '19.0',
+    commonslang3         : '3.4',
+    javamail             : '1.4.7',
+    commonsio            : '2.5',
+    httpclient           : '4.5.2',
+    powermock            : '1.6.4',
+    el                   : '2.2.4'
+  ]
+  assertjObject = file('src/test/assertions')
+}
+
+ext.repo = Grgit.open(project.file('.'))
+
+repositories {
+  mavenCentral()
+}
+
+apply from: "${rootDir}/gradle/scripts/profileLoader.gradle"
+apply from: "${rootDir}/gradle/scripts/eclipseSetup.gradle"
+apply from: "${rootDir}/gradle/scripts/staticAnalysis.gradle"
+apply from: "${rootDir}/gradle/scripts/obfuscate.gradle"
+
+dependencies {
+
+  compile fileTree(dir: 'lib', include: '*.jar')
+
+  compile "org.springframework:spring-core:$versions.springframework"
+  compile "org.springframework:spring-web:$versions.springframework"
+  compile "org.springframework:spring-webmvc:$versions.springframework"
+  compile "org.springframework:spring-beans:$versions.springframework"
+  compile "org.springframework:spring-jdbc:$versions.springframework"
+  compile "org.springframework:spring-context:$versions.springframework"
+  compile "org.springframework:spring-context-support:$versions.springframework"
+  compile "org.springframework:spring-aop:$versions.springframework"
+  compile "org.springframework:spring-tx:$versions.springframework"
+
+  compile "org.aspectj:aspectjrt:$versions.aspectj"
+  compile "org.aspectj:aspectjweaver:$versions.aspectj"
+
+  compile "javax.validation:validation-api:$versions.validationapi"
+  compile "org.hibernate:hibernate-validator:$versions.hibernatevalidator"
+
+  compile "org.mybatis:mybatis:$versions.mybatis"
+  compile "org.mybatis:mybatis-spring:$versions.mybatisspring"
+
+  compile 'org.apache.commons:commons-dbcp2:2.1.1'
+
+  compile "org.slf4j:slf4j-api:$versions.slf4j"
+  compile "org.slf4j:jcl-over-slf4j:$versions.slf4j"
+
+  compile "ch.qos.logback:logback-classic:$versions.logback"
+  compile "net.logstash.logback:logstash-logback-encoder:4.8"
+  compile 'com.microsoft.azure:applicationinsights-logging-logback:1.0.7'
+
+  compile "com.fasterxml.jackson.core:jackson-databind:$versions.jackson"
+  compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$versions.jacksondatetypejsr310"
+
+  compile "com.google.guava:guava:$versions.guava"
+
+  compile "commons-io:commons-io:$versions.commonsio"
+  compile "org.apache.commons:commons-lang3:$versions.commonslang3"
+
+  compile "com.sun.mail:javax.mail:$versions.javamail"
+
+  compile "org.apache.httpcomponents:httpclient:$versions.httpclient"
+
+  runtime 'org.postgresql:postgresql'
+  
+  compile 'commons-codec:commons-codec:1.10'
+
+  compile "com.microsoft.azure:azure-storage:5.0.0"
+
+  compile "redis.clients:jedis:2.9.0"
+
+  compile "org.springframework.data:spring-data-redis:1.8.3.RELEASE"
+
+  compile "org.springframework.retry:spring-retry:1.2.0.RELEASE"
+
+  providedCompile "javax.servlet:javax.servlet-api:$versions.servlet"
+
+  testCompile 'junit:junit:4.11'
+
+  testCompile "org.powermock:powermock-api-mockito:$versions.powermock"
+  testCompile "org.powermock:powermock-module-junit4:$versions.powermock"
+  testCompile 'org.mockito:mockito-core:1.9.5'
+
+  testCompile 'org.assertj:assertj-core:3.6.1'
+
+  testCompile 'com.github.mygreen:super-csv-annotation:1.1'
+  testCompile "javax.el:javax.el-api:$versions.el"
+  testCompile "org.glassfish.web:javax.el:$versions.el"
+}
+
+sourceSets {
+  main.resources {
+    srcDirs += main.java.srcDirs
+    exclude '**/db/'
+    exclude '**/jdbc/'
+    exclude '**/appproperty/'
+    exclude '**/logback/'
+  }
+  test.java {
+    srcDir 'src/test/java'
+  }
+}
+
+task wrapper(type: Wrapper) { gradleVersion = '3.1' }
+
+def warName = "sample-user-project1.war"

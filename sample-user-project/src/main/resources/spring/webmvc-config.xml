@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd">
+
+    <context:property-placeholder
+            location="classpath:/*.properties"
+            ignore-resource-not-found="true" file-encoding="UTF-8"/>
+
+    <bean
+            class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:application.properties"/>
+        <property name="fileEncoding" value="UTF-8"/>
+    </bean>
+
+    <aop:aspectj-autoproxy/>
+    <mvc:annotation-driven validator="validator"/>
+    <mvc:default-servlet-handler/>
+
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+      <property name="urlMap">
+        <map>
+          <entry key="/content/**" value="instechResourceHandler"/>
+        </map>
+      </property>
+      <property name="order" value="2"/>
+    </bean>
+    <bean id="instechResourceHandler" name="instechResourceHandler"
+          class="org.springframework.web.servlet.resource.ResourceHttpRequestHandler">
+      <property name="locations" value="classpath:/www/"/>
+      <property name="supportedMethods">
+        <list>
+          <value>GET</value>
+          <value>POST</value>
+        </list>
+      </property>
+    </bean>
+
+    <mvc:view-controller path="/content/" view-name="/content/index.html"/>
+
+    <mvc:cors>
+        <mvc:mapping path="/**"/>
+    </mvc:cors>
+
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename" value="classpath:message"></property>
+        <property name="fileEncodings" value="UTF-8"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <property name="messageInterpolator">
+            <bean class="org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator">
+                <constructor-arg index="0">
+                    <bean
+                            class="org.springframework.validation.beanvalidation.MessageSourceResourceBundleLocator">
+                        <constructor-arg index="0" ref="messageSource"/>
+                    </bean>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+
+    <context:component-scan base-package="com.accenture.im" use-default-filters="true">
+        <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController"/>
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Component"/>
+    </context:component-scan>
+
+    <import resource="./datasource-config.xml"/>
+    <import resource="./service-config.xml"/>
+</beans>

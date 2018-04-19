@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.accenture.im.repository.AuthRepository">
-    <resultMap id="BaseResultMap" type="Auth">
+    <resultMap id="BaseResultMap" type="com.accenture.im.entity.AuthEntity">
         <id column="LOGIN_NAME" jdbcType="VARCHAR" property="loginName"/>
         <result column="NAME" jdbcType="VARCHAR" property="name"/>
         <result column="LOGIN_PASSWORD" jdbcType="VARCHAR" property="loginPassword"/>
@@ -18,6 +18,7 @@
         MU.LOGIN_FAILED_COUNT,
         MU.ACCOUNT_LOCK_FLAG,
         MU.ACCOUNT_LOCK_DATE,
+        MU.SALT,
         MU.PASSWORD_LAST_UPDATED_DATE
     </sql>
     
@@ -27,12 +28,12 @@
         FROM
             M_USER MU 
         WHERE
-            MU.USER_MNG_NO = #{loginName,jdbcType=VARCHAR}
+            MU.LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
     </select>
     
     <update id="releaseLock" parameterType="map">
         UPDATE
-            M_AUTH
+            M_USER
         <set>
             LOGIN_FAILED_COUNT = 0,
             ACCOUNT_LOCK_FLAG = 'N',
@@ -41,51 +42,47 @@
             UPDATED_DATE = #{updatedDate,jdbcType=TIMESTAMP},
         </set>
         WHERE
-            USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
+            LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
     </update>
     <update id="clearLockCount" parameterType="map">
         UPDATE
-            M_AUTH
+            M_USER
         <set>
             LOGIN_FAILED_COUNT = 0,
             UPDATED_USER_ID = #{updatedUserId,jdbcType=VARCHAR},
             UPDATED_DATE = #{updatedDate,jdbcType=TIMESTAMP},
         </set>
         WHERE
-            USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
+            LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
     </update>
     <update id="updateLoginFailureCount" parameterType="map">
         UPDATE
-            M_AUTH
+            M_USER
         <set>
-            LOGIN_FAILED_COUNT = LOGIN_FAILED_COUNT + 1,
-            UPDATED_USER_ID = #{updatedUserId,jdbcType=VARCHAR},
-            UPDATED_DATE = #{updatedDate,jdbcType=TIMESTAMP},
+            LOGIN_FAILED_COUNT = LOGIN_FAILED_COUNT + 1
         </set>
         WHERE
-            USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
+            LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
     </update>
     <update id="lockAccount" parameterType="map">
         UPDATE
-            M_AUTH
+            M_USER
         <set>
             ACCOUNT_LOCK_FLAG = 'Y',
-            ACCOUNT_LOCK_DATE = #{accountLockDate,jdbcType=TIMESTAMP},
-            UPDATED_USER_ID = #{updatedUserId,jdbcType=VARCHAR},
-            UPDATED_DATE = #{updatedDate,jdbcType=TIMESTAMP},
+            ACCOUNT_LOCK_DATE = #{accountLockDate,jdbcType=TIMESTAMP}
         </set>
         WHERE      
-            USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
+            LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
     </update>
-    <update id="update" parameterType="Auth">
+    <update id="update" parameterType="com.accenture.im.entity.AuthEntity">
         UPDATE
-            M_AUTH
+            M_USER
         <set>
             <if test="loginPassword != null">
                 LOGIN_PASSWORD = #{loginPassword,jdbcType=VARCHAR},
             </if>
             <if test="loginFailedCount != null">
-                LOGIN_FAILED_COUNT = #{loginFailedCount,jdbcType=INT},
+                LOGIN_FAILED_COUNT = #{loginFailedCount,jdbcType=NUMERIC},
             </if>
             <if test="accountLockFlag != null">
                 ACCOUNT_LOCK_FLAG = #{accountLockFlag,jdbcType=VARCHAR},
@@ -93,21 +90,15 @@
             <if test="accountLockDate != null">
                 ACCOUNT_LOCK_DATE = #{accountLockDate,jdbcType=TIMESTAMP},
             </if>
-            <if test="updatedUserId != null">
-                UPDATED_USER_ID = #{updatedUserId,jdbcType=VARCHAR},
-            </if>
-            <if test="updatedDate != null">
-                UPDATED_DATE = #{updatedDate,jdbcType=TIMESTAMP},
-            </if>
             <if test="passwordLastUpdatedDate != null">
                 PASSWORD_LAST_UPDATED_DATE = #{passwordLastUpdatedDate,jdbcType=TIMESTAMP},
             </if>
         </set>
         WHERE
-            USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
+            LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
     </update>
-    <insert id="insert" parameterType="Auth">
-        INSERT INTO M_AUTH
+    <insert id="insert" parameterType="com.accenture.im.entity.AuthEntity">
+        INSERT INTO M_USER
         <trim prefix="(" suffix=")" suffixOverrides=",">
             LOGIN_NAME,
             NAME,

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.accenture.adep.repository.DeviceRepository">
-    <resultMap id="BaseResultMap" type="com.accenture.adep.entity.DeviceEntity">
+<mapper namespace="com.accenture.im.repository.DeviceRepository">
+    <resultMap id="BaseResultMap" type="com.accenture.im.entity.DeviceEntity">
         <id column="LOGIN_NAME" jdbcType="VARCHAR" property="loginName"/>
         <result column="DEVICE_ID" jdbcType="VARCHAR" property="deviceId"/>
         <result column="AUTH_TOKEN" jdbcType="VARCHAR" property="authToken"/>
@@ -19,7 +19,7 @@
         PUSH_DEVICE_TOKEN,
         NECESSITY_AUTH_SECRET_QUESTION
     </sql>
-    <select id="select" parameterType="com.accenture.adep.entity.DeviceEntity" resultMap="BaseResultMap">
+    <select id="select" parameterType="com.accenture.im.entity.DeviceEntity" resultMap="BaseResultMap">
         SELECT
             <include refid="Base_Column_List"/>
         FROM
@@ -36,6 +36,15 @@
         WHERE
             LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
     </select>
+    <select id="selectToken" parameterType="hashMap" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            M_DEVICE
+        WHERE
+            AUTH_TOKEN = #{token,jdbcType=VARCHAR}
+    </select>
+
     <!-- <select id="selectByDeviceAndToken" parameterType="hashMap"
             resultMap="BaseResultMap">
         SELECT
@@ -86,7 +95,7 @@
           DEVICE_ID=#{deviceId,jdbcType=VARCHAR}
           AND DEVICE_LOCK_FLAG = 'Y';
     </select>
-    <select id="selectLastSyncDate" parameterType="com.accenture.adep.entity.DeviceEntity" resultMap="BaseResultMap">
+    <select id="selectLastSyncDate" parameterType="com.accenture.im.entity.DeviceEntity" resultMap="BaseResultMap">
         SELECT
             USER_MNG_NO,
             MAX(LAST_SYNC_DATE) LAST_SYNC_DATE
@@ -96,12 +105,12 @@
             USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
         GROUP BY
             USER_MNG_NO
-    </select>
-    <insert id="insert" parameterType="com.accenture.adep.entity.DeviceEntity">
+    </select>-->
+    <insert id="insert" parameterType="com.accenture.im.entity.DeviceEntity">
         INSERT INTO M_DEVICE
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="userMngNo != null">
-                USER_MNG_NO,
+            <if test="loginName != null">
+                LOGIN_NAME,
             </if>
             <if test="deviceId != null">
                 DEVICE_ID,
@@ -115,25 +124,13 @@
             <if test="pushDeviceToken != null">
                 PUSH_DEVICE_TOKEN,
             </if>
-            <if test="creationUserId != null">
-                CREATION_USER_ID,
-            </if>
-            <if test="creationDate != null">
-                CREATION_DATE,
-            </if>
-            <if test="updatedUserId != null">
-                UPDATED_USER_ID,
-            </if>
-            <if test="updatedDate != null">
-                UPDATED_DATE,
-            </if>
             <if test="necessityAuthSecretQuestion != null">
                 NECESSITY_AUTH_SECRET_QUESTION
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="userMngNo != null">
-                #{userMngNo,jdbcType=VARCHAR},
+            <if test="loginName != null">
+                #{loginName,jdbcType=VARCHAR},
             </if>
             <if test="deviceId != null">
                 #{deviceId,jdbcType=VARCHAR},
@@ -147,26 +144,17 @@
             <if test="pushDeviceToken != null">
                 #{pushDeviceToken,jdbcType=VARCHAR},
             </if>
-            <if test="creationUserId != null">
-                #{creationUserId,jdbcType=VARCHAR},
-            </if>
-            <if test="creationDate != null">
-                #{creationDate,jdbcType=TIMESTAMP},
-            </if>
-            <if test="updatedUserId != null">
-                #{updatedUserId,jdbcType=VARCHAR},
-            </if>
-            <if test="updatedDate != null">
-                #{updatedDate,jdbcType=TIMESTAMP},
-            </if>
             <if test="necessityAuthSecretQuestion != null">
                 #{necessityAuthSecretQuestion,jdbcType=VARCHAR}
             </if>
         </trim>
     </insert>
-    <update id="update" parameterType="com.accenture.adep.entity.DeviceEntity">
+    <update id="update" parameterType="com.accenture.im.entity.DeviceEntity">
         UPDATE M_DEVICE
         <set>
+            <if test="deviceId != null">
+                DEVICE_ID = #{deviceId,jdbcType=VARCHAR},
+            </if>
             <if test="authToken != null">
                 AUTH_TOKEN = #{authToken,jdbcType=VARCHAR},
             </if>
@@ -179,20 +167,14 @@
             <if test="pushDeviceToken != null">
                 PUSH_DEVICE_TOKEN = #{pushDeviceToken,jdbcType=VARCHAR},
             </if>
-            <if test="updatedUserId != null">
-                UPDATED_USER_ID = #{updatedUserId,jdbcType=VARCHAR},
-            </if>
-            <if test="updatedDate != null">
-                UPDATED_DATE = #{updatedDate,jdbcType=TIMESTAMP},
-            </if>
             <if test="necessityAuthSecretQuestion != null">
                 NECESSITY_AUTH_SECRET_QUESTION = #{necessityAuthSecretQuestion,jdbcType=VARCHAR}
             </if>
         </set>
         WHERE
-            USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
-            AND DEVICE_ID = #{deviceId,jdbcType=VARCHAR}
+            LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
     </update>
+    <!-- 
     <update id="updateToClearOldDeviceToken" parameterType="hashMap">
         UPDATE M_DEVICE
         <set>
@@ -212,7 +194,7 @@
                 DEVICE.USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
             )
     </update>
-    <update id="updateForLogOut" parameterType="com.accenture.adep.entity.DeviceEntity">
+    <update id="updateForLogOut" parameterType="com.accenture.im.entity.DeviceEntity">
         UPDATE M_DEVICE
         <set>
             AUTH_TOKEN = NULL,
@@ -224,7 +206,7 @@
             USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
             AND DEVICE_ID = #{deviceId,jdbcType=VARCHAR}
     </update>
-    <update id="updateForResign" parameterType="com.accenture.adep.entity.DeviceEntity">
+    <update id="updateForResign" parameterType="com.accenture.im.entity.DeviceEntity">
         UPDATE M_DEVICE
         <set>
             AUTH_TOKEN = NULL,
@@ -236,7 +218,7 @@
         WHERE
             USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
     </update>
-    <update id="updateToClearOthersToken" parameterType="com.accenture.adep.entity.DeviceEntity">
+    <update id="updateToClearOthersToken" parameterType="com.accenture.im.entity.DeviceEntity">
         UPDATE M_DEVICE
         <set>
             AUTH_TOKEN = NULL,
@@ -248,7 +230,7 @@
             USER_MNG_NO <![CDATA[<>]]> #{userMngNo,jdbcType=VARCHAR}
             AND DEVICE_ID = #{deviceId,jdbcType=VARCHAR}
     </update>
-    <delete id="delete" parameterType="com.accenture.adep.entity.DeviceEntity">
+    <delete id="delete" parameterType="com.accenture.im.entity.DeviceEntity">
         DELETE
         FROM
             M_DEVICE

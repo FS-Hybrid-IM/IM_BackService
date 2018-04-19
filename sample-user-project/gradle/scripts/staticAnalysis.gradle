@@ -1,0 +1,51 @@
+/*
+  Setup tasks for static analysis.
+ */
+
+apply plugin: 'findbugs'
+apply plugin: 'checkstyle'
+apply plugin: 'jacoco'
+
+findbugs {
+  ignoreFailures = true
+  sourceSets = [sourceSets.main]
+  reportsDir = file("${project.buildDir}/reports/findbugs")
+  excludeFilter = new File("${rootDir}/config/findbugs-exlude-filter.xml")
+  effort = 'max'
+}
+
+tasks.withType(FindBugs) {
+  reports {
+    html {
+      enabled = false
+      destination = "${findbugs.reportsDir}/findbugs.html"
+    }
+    xml.enabled = !html.enabled
+  }
+}
+
+checkstyle {
+  toolVersion = '8.7'
+  ignoreFailures = true
+  configFile = file("${rootDir}/config/checkstyle.xml")
+  sourceSets = [sourceSets.main]
+}
+
+jacoco {
+  toolVersion = '0.7.7.201606060606'
+  reportsDir = file("${project.buildDir}/reports/customJacocoReportDir")
+}
+
+jacocoTestReport {
+  reports {
+    xml.enabled false
+    csv.enabled false
+    html.destination "${project.buildDir}/reports/jacocoHtml"
+  }
+}
+
+sonarqube {
+  properties {
+    property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/test.exec"
+  }
+}

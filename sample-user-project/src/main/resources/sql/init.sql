@@ -1,0 +1,4 @@
+CREATE DATABASE im COLLATE Japanese_BIN2; GO
+USE im;
+
+CREATE USER imuser LOGIN PASSWORD 'imuser'; GO

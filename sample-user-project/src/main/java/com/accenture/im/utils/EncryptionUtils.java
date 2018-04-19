@@ -34,13 +34,6 @@ public class EncryptionUtils {
         return deriveHashString(salt, secretQuestion);
     }
 
-    /**
-     * 文字列のハッシュを導出する。
-     *
-     * @param salt 導出プロセスにて用いるsalt
-     * @param str ハッシュ化対象の文字列
-     * @return ハッシュ化された文字列
-     */
     private static String deriveHashString(String salt, String str) {
         char[] charArray = str.toCharArray();
         byte[] hashedSalt = hashStr(salt);

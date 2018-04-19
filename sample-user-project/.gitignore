@@ -1,26 +1,22 @@
+﻿# Specifies files to intentionally ignore when using Git
+# http://git-scm.com/docs/gitignore
+
+*.swp
+.DS_Store
+Thumbs.db
 .gradle
-/build/
-!gradle/wrapper/gradle-wrapper.jar
+build
+out
+.vscode/*
+!.vscode/extensions.json
+patch.diff
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
+### WebStorm(IntelliJ) ###
+.idea/
 *.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/build/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+.checkstyle
+.classpath
+.project
+.settings/
+bin/
+classes/

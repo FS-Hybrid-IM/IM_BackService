@@ -1,0 +1,82 @@
+jenkins:
+  slack:
+    team: dikenko
+    channel:
+      jenkins: '#jenkins'
+      developer: '#acn-developer'
+      ita: '#sprint-ita'
+      release: '#acn-release'
+      completed: '#acn-release-completed'
+    title: 'WEB API'
+  tool:
+    java: dli-jdk
+    gradle: dli-gradle
+    node: dli-node
+  azure_blob:
+    credentials_id: azure-blob
+    storage_name: DLI_STORAGE_NAME
+    access_key: DLI_ACCESS_KEY
+  artifacts:
+    base: build/libs/dlkenkoappli-api
+    extension: war
+    files: '**/build/libs/*.war,**/build/libs/*.MD5,**/build/distributions/*.zip'
+  branch:
+    build:
+      history:
+        days: '7'
+        keep: '5'
+  doc:
+    releasenote: '<https://wb026001.acpaws-dev.com/releasenote/api/|リリースノート>'
+  release:
+    category1: core
+    category2: api
+  action:
+    test:
+      active: true
+      command: 'gradle build -PPROFILE=local'
+    build:
+      command: 'gradle war'
+    deploy:
+      command: 'gradle deploy tomcatRestart'
+    report:
+      active: true
+    sonar:
+      active: true
+      command: 'gradle jacocoTestReport sonar'
+    left_most:
+      active: false
+  shared:
+    environment:
+      - test
+      - staging
+      - prod
+      - pt
+      - prom
+      - biz
+  crosscheck:
+    profile:
+      - nightly
+      - prod
+      - biz
+    files:
+      # 環境別設定ファイル
+      - src/main/resources/appproperty/environment.properties
+      - src/main/resources/appproperty/application.default.properties
+      # jdbc設定
+      - src/main/resources/jdbc/jdbc.dev.properties
+      - src/main/resources/jdbc/jdbc.dev_next.properties
+      - src/main/resources/jdbc/jdbc.local.properties
+      - src/main/resources/jdbc/jdbc.nightly.properties
+      - src/main/resources/jdbc/jdbc.nightly_next.properties
+      - src/main/resources/jdbc/jdbc.prod.properties
+      - src/main/resources/jdbc/jdbc.prom.properties
+      - src/main/resources/jdbc/jdbc.pt.properties
+      - src/main/resources/jdbc/jdbc.staging.properties
+      - src/main/resources/jdbc/jdbc.sub.properties
+      - src/main/resources/jdbc/jdbc.test.properties
+      - src/main/resources/jdbc/jdbc.test_next.properties
+      # log設定
+      - src/main/resources/logback/logback.default.xml
+      - src/main/resources/logback/logback.insights.xml
+      - src/main/resources/logback/logback.insights_file.xml
+      - src/main/resources/logback/logback.slack.xml

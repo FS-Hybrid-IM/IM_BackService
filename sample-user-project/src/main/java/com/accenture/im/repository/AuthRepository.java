@@ -1,7 +1,5 @@
 package com.accenture.im.repository;
 
-import java.time.LocalDateTime;
-
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

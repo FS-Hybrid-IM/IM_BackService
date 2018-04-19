@@ -2,9 +2,6 @@ package com.accenture.im.entity;
 
 import java.time.LocalDateTime;
 
-import org.apache.ibatis.type.Alias;
-
-@Alias("Auth")
 public class AuthEntity {
     private String loginName;
     private String loginPassword;
