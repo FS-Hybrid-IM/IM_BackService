@@ -24,9 +24,6 @@ import java.util.Map;
 
 import io.netty.channel.ChannelHandlerContext;
 
-/**
- * Created by zhaoyuan on 16/2/2.
- */
 public class ProxySession {
 
     public static class Manager {

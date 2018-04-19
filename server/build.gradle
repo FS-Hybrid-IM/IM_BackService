@@ -4,7 +4,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.7.3'
+        classpath 'com.android.tools.build:gradle:2.1.2'
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.7.6'
     }
 }
 
@@ -26,6 +27,11 @@ sourceSets {
             srcDir 'src/main/proto'
         }
     }
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
 }
 
 jettyRun {
