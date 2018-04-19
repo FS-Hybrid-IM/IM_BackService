@@ -25,9 +25,6 @@ plugins {
 import com.bmuschko.gradle.cargo.convention.Deployable
 import com.bmuschko.gradle.cargo.tasks.remote.CargoRedeployRemote
 
-import org.ajoberstar.grgit.Grgit
-import org.ajoberstar.grgit.Person
-
 import groovy.xml.MarkupBuilder
 import groovy.json.JsonBuilder
 
@@ -69,8 +66,6 @@ ext {
   ]
   assertjObject = file('src/test/assertions')
 }
-
-ext.repo = Grgit.open(project.file('.'))
 
 repositories {
   mavenCentral()
