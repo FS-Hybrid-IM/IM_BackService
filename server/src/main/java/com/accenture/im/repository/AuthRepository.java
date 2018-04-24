@@ -1,10 +1,10 @@
 package com.accenture.im.repository;
 
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Mapper;
 
 import com.accenture.im.entity.AuthEntity;
 
-@Repository
+@Mapper
 public interface AuthRepository {
 
 	AuthEntity selectByLoginName(String loginName);

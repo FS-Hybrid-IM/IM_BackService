@@ -39,7 +39,6 @@ import com.accenture.im.repository.DeviceRepository;
 import com.accenture.im.sample.proto.Main;
 import com.accenture.im.utils.LogUtils;
 
-
 @Path("/mars/getconvlist")
 public class GetConversationListCgi {
 
