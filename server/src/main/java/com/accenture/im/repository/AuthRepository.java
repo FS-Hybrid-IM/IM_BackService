@@ -1,6 +1,5 @@
 package com.accenture.im.repository;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.accenture.im.entity.AuthEntity;
@@ -8,7 +7,7 @@ import com.accenture.im.entity.AuthEntity;
 @Repository
 public interface AuthRepository {
 
-	AuthEntity selectByLoginName(@Param("loginName") String loginName);
+	AuthEntity selectByLoginName(String loginName);
 
 	int insert(AuthEntity entity);
 

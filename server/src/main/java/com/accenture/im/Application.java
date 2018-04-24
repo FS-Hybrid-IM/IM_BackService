@@ -22,6 +22,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
+import java.net.InetSocketAddress;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +35,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 
+import com.accenture.im.datacenter.CacheData;
 import com.accenture.im.handler.ChannelInitializerImpl;
+import com.accenture.im.logicserver.ProxySession;
 import com.accenture.im.server.IMServer;
 
 /**
@@ -58,8 +62,12 @@ public class Application {
     { }
 
     public static void main(String[] args) throws Exception {
+        CacheData.connect();
+        ProxySession.Manager.connect();
         ConfigurableApplicationContext ctx = SpringApplication.run(Application.class, args);
         ctx.getBean(IMServer.class).start();
+        ProxySession.Manager.disconnect();
+        CacheData.disconnect();
     }
 
     @Value("${tcp.port}")
@@ -103,4 +111,8 @@ public class Application {
         return new NioEventLoopGroup(workerCount);
     }
 
+    @Bean(name = "tcpSocketAddress")
+    public InetSocketAddress tcpPort() {
+        return new InetSocketAddress(tcpPort);
+    }
 }

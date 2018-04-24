@@ -14,12 +14,6 @@
 
 package com.accenture.im.webserver;
 
-import com.accenture.im.sample.proto.Main;
-import com.accenture.im.utils.LogUtils;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,6 +27,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.accenture.im.entity.ChatRoomEntity;
+import com.accenture.im.entity.DeviceEntity;
+import com.accenture.im.repository.ChatRoomRepository;
+import com.accenture.im.repository.DeviceRepository;
+import com.accenture.im.sample.proto.Main;
+import com.accenture.im.utils.LogUtils;
 
 
 @Path("/mars/getconvlist")
@@ -58,11 +63,11 @@ public class GetConversationListCgi {
 
     Logger logger = Logger.getLogger(GetConversationListCgi.class.getName());
 
-    private String[][] conDetails = new String[][]{
-            new String[] {"Mars", "0", "STN Discuss"},
-            new String[] {"Mars", "1", "Xlog Discuss"},
-            new String[] {"Mars", "2", "SDT Discuss"}
-    };
+    @Autowired
+    DeviceRepository deviceRepository;
+
+    @Autowired
+    ChatRoomRepository chatRoomRepository;
 
     @POST()
     @Consumes("application/octet-stream")
@@ -73,15 +78,16 @@ public class GetConversationListCgi {
 
             logger.info(LogUtils.format("request from access_token=%s, type=%d", request.getAccessToken(), request.getType()));
 
+            DeviceEntity deviceInfo = deviceRepository.selectToken(request.getAccessToken());
+            List<ChatRoomEntity> conDetails = chatRoomRepository.selectByLoginName(deviceInfo.getLoginName());
             List<Main.Conversation> conversationList = null;
-            if (request.getType() == Main.ConversationListRequest.FilterType.DEFAULT_VALUE) {
-                conversationList = new LinkedList<Main.Conversation>();
-
-                for (String[] conv : conDetails) {
+            if (request.getType() == Main.ConversationListRequest.FilterType.DEFAULT_VALUE && !conDetails.isEmpty()) {
+                conversationList = new LinkedList<>();
+                for (ChatRoomEntity con : conDetails) {
                     conversationList.add(Main.Conversation.newBuilder()
-                            .setName(conv[0])
-                            .setTopic(conv[1])
-                            .setNotice(conv[2])
+                            .setName(con.getChatRoomName())
+                            .setTopic(String.valueOf(con.getSortNum()))
+                            .setNotice(con.getChatRoomTitle())
                             .build());
                 }
             }

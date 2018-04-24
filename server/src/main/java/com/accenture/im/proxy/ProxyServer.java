@@ -85,8 +85,8 @@ public class ProxyServer {
     public static void main(String[] args) throws Exception {
 
 //        // init non-persistent database
-//        CacheData.connect();
-//        ProxySession.Manager.connect();
+        CacheData.connect();
+        ProxySession.Manager.connect();
 
         int port;
         if (args.length > 0) {
@@ -97,7 +97,7 @@ public class ProxyServer {
         new ProxyServer(port).start();
 
         ProxySession.Manager.disconnect();
-        CacheData.disconnect();
+//        CacheData.disconnect();
     }
 }
 

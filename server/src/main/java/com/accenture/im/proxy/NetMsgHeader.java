@@ -24,9 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Created by zhaoyuan on 16/2/2.
- */
 public class NetMsgHeader {
 
     public static Logger logger = Logger.getLogger(NetMsgHeader.class.getName());

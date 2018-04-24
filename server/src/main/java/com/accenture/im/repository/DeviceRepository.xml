@@ -44,7 +44,6 @@
         WHERE
             AUTH_TOKEN = #{token,jdbcType=VARCHAR}
     </select>
-
     <!-- <select id="selectByDeviceAndToken" parameterType="hashMap"
             resultMap="BaseResultMap">
         SELECT
