@@ -90,6 +90,15 @@
         WHERE
             CHAT_ROOM_ID = #{chatRoomId,jdbcType=VARCHAR}
     </update>
+    <select id="selectByLoginNameAndSortNum" parameterType="hashMap" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            T_CHAT_ROOM
+        WHERE
+            CHAT_ROOM_ID = #{chatRoomId,jdbcType=VARCHAR}
+        AND SORT_NUM = #{sortNum,jdbcType=INTEGER}
+    </select>
     <!-- 
     <update id="updateToClearOldDeviceToken" parameterType="hashMap">
         UPDATE M_DEVICE

@@ -65,31 +65,31 @@ public class NetMsgHeader {
         try {
             headLength = dis.readInt();
             clientVersion = dis.readInt();
-            cmdId = dis.readInt();
+            cmdId = 1;
             seq = dis.readInt();
             int bodyLen = dis.readInt();
-//
-//            if (clientVersion != CLIENTVERSION) {
-//                throw new InvalidHeaderException("invalid client version in header, clientVersion: " + clientVersion + " packlen: " + (headLength + bodyLen));
-//            }
-//
-//            logger.debug(LogUtils.format("dump clientVersion=%d, cmdid=%d, seq=%d, packlen=%d", clientVersion, cmdId, seq, (headLength + bodyLen)));
-//
-//            // read body?
-//            if (bodyLen > 0) {
-//                body = new byte[bodyLen];
-//                dis.readFully(body);
-//
-//            } else {
-//                // no body?!
-//                switch (cmdId) {
-//                    case CMDID_NOOPING:
-//                        break;
-//
-//                    default:
-//                        throw new InvalidHeaderException("invalid header body, cmdid:" + cmdId);
-//                }
-//            }
+
+            if (clientVersion != CLIENTVERSION) {
+                throw new InvalidHeaderException("invalid client version in header, clientVersion: " + clientVersion + " packlen: " + (headLength + bodyLen));
+            }
+
+            logger.debug(LogUtils.format("dump clientVersion=%d, cmdid=%d, seq=%d, packlen=%d", clientVersion, cmdId, seq, (headLength + bodyLen)));
+
+            // read body?
+            if (bodyLen > 0) {
+                body = new byte[bodyLen];
+                dis.readFully(body);
+
+            } else {
+                // no body?!
+                switch (cmdId) {
+                    case CMDID_NOOPING:
+                        break;
+
+                    default:
+                        throw new InvalidHeaderException("invalid header body, cmdid:" + cmdId);
+                }
+            }
 
             return true;
 

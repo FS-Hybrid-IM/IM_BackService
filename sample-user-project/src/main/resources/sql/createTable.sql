@@ -34,7 +34,7 @@ create table T_ADDRESS_BOOK (
 
 create sequence chat_room_id_seq;
 create table T_CHAT_ROOM (
-  CHAT_ROOM_ID integer  default nextval('chat_room_id_seq'::regclass) not null
+  CHAT_ROOM_ID integer default nextval('chat_room_id_seq'::regclass) not null
   , LOGIN_NAME character varying(255) not null
   , CHAT_ROOM_NAME character varying(255) not null
   , SORT_NUM integer not null
@@ -42,3 +42,9 @@ create table T_CHAT_ROOM (
   , DELETE_FLAG character varying(1)
   , constraint T_CHAT_ROOM_PKC primary key (CHAT_ROOM_ID)
 ) ;
+
+create table T_CHAT_ROOM_USER (
+  CHAT_ROOM_ID integer not null
+  , CHAT_ROOM_LOGIN_NAME character varying(255) not null
+  , constraint T_CHAT_ROOM_USER_PKC primary key (CHAT_ROOM_ID, CHAT_ROOM_LOGIN_NAME)
+);
