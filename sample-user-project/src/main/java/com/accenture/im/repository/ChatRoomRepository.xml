@@ -96,7 +96,7 @@
         FROM
             T_CHAT_ROOM
         WHERE
-            CHAT_ROOM_ID = #{chatRoomId,jdbcType=VARCHAR}
+            LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
         AND SORT_NUM = #{sortNum,jdbcType=INTEGER}
     </select>
     <!-- 
