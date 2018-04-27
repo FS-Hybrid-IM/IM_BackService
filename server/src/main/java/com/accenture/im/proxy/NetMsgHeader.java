@@ -65,7 +65,7 @@ public class NetMsgHeader {
         try {
             headLength = dis.readInt();
             clientVersion = dis.readInt();
-            cmdId = 1;
+            cmdId = dis.readInt();
             seq = dis.readInt();
             int bodyLen = dis.readInt();
 

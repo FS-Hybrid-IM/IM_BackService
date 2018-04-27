@@ -16,6 +16,7 @@
 package com.accenture.im;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -36,7 +37,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 
 import com.accenture.im.datacenter.CacheData;
-import com.accenture.im.handler.ChannelInitializerImpl;
 import com.accenture.im.logicserver.ProxySession;
 import com.accenture.im.server.IMServer;
 
@@ -99,7 +99,7 @@ public class Application {
 
     @Autowired
     @Qualifier("channelInitializer")
-    private ChannelInitializerImpl channelInitializer;
+    private ChannelHandler channelInitializer;
 
     @Bean(name = "bossGroup", destroyMethod = "shutdownGracefully")
     public NioEventLoopGroup bossGroup() {
