@@ -62,10 +62,12 @@ dependencies {
     compile 'io.netty:netty-all:4.0.4.Final'
     compile 'org.xerial:sqlite-jdbc:3.7.2'
     compile 'apache-log4j:log4j:1.2.15'
+    compile "org.mybatis:mybatis:3.4.6"
+    compile 'postgresql:postgresql:9.1-901-1.jdbc4'
 }
 
 task nettyRun(type: JavaExec, dependsOn: ['classes']) {
-    main = 'com.tencent.mars.proxy.ProxyServer'
+    main = 'com.accenture.im.proxy.ProxyServer'
     classpath = sourceSets.main.runtimeClasspath
 }
 

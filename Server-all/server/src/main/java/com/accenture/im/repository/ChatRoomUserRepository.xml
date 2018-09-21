@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accenture.im.repository.ChatRoomUserRepository">
+    <resultMap id="BaseResultMap" type="com.accenture.im.entity.ChatRoomUserEntity">
+        <id column="CHAT_ROOM_ID" jdbcType="INTEGER" property="chatRoomId"/>
+        <result column="CHAT_ROOM_LOGIN_NAME" jdbcType="VARCHAR" property="chatRoomLoginName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        CHAT_ROOM_ID,
+        CHAT_ROOM_LOGIN_NAME
+    </sql>
+    <select id="selectByChatRoomId" parameterType="hashMap" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            T_CHAT_ROOM_USER
+        WHERE
+            CHAT_ROOM_ID = #{chatRoomId,jdbcType=INTEGER}
+    </select>
+    <insert id="insert" parameterType="com.accenture.im.entity.ChatRoomEntity">
+        INSERT INTO T_CHAT_ROOM_USER
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="chatRoomId != null">
+                CHAT_ROOM_ID,
+            </if>
+            <if test="chatRoomLoginName != null">
+                CHAT_ROOM_LOGIN_NAME
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="chatRoomId != null">
+                #{chatRoomId,jdbcType=VARCHAR},
+            </if>
+            <if test="chatRoomLoginName != null">
+                #{chatRoomLoginName,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </insert>
+    <update id="delete" parameterType="hashMap">
+        DELETE FROM CHAT_ROOM_ID
+        WHERE
+            CHAT_ROOM_ID = #{chatRoomId,jdbcType=VARCHAR}
+    </update>
+    <!-- 
+    <update id="updateToClearOldDeviceToken" parameterType="hashMap">
+        UPDATE M_DEVICE
+        <set>
+            AUTH_TOKEN = NULL,
+            AUTH_TOKEN_PUBLISH_DATE = NULL,
+            UPDATED_USER_ID = #{userMngNo,jdbcType=VARCHAR},
+            UPDATED_DATE = #{currentDateTime,jdbcType=TIMESTAMP}
+        </set>
+        WHERE
+            USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
+            AND AUTH_TOKEN_PUBLISH_DATE <![CDATA[<>]]> (
+              SELECT
+                MAX(DEVICE.AUTH_TOKEN_PUBLISH_DATE) AS LATEST_DATE
+              FROM
+                M_DEVICE DEVICE
+              WHERE
+                DEVICE.USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
+            )
+    </update>
+    <update id="updateForLogOut" parameterType="com.accenture.im.entity.DeviceEntity">
+        UPDATE M_DEVICE
+        <set>
+            AUTH_TOKEN = NULL,
+            AUTH_TOKEN_PUBLISH_DATE = NULL,
+            UPDATED_USER_ID = #{updatedUserId,jdbcType=VARCHAR},
+            UPDATED_DATE = #{updatedDate,jdbcType=TIMESTAMP}
+        </set>
+        WHERE
+            USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
+            AND DEVICE_ID = #{deviceId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateForResign" parameterType="com.accenture.im.entity.DeviceEntity">
+        UPDATE M_DEVICE
+        <set>
+            AUTH_TOKEN = NULL,
+            AUTH_TOKEN_PUBLISH_DATE = NULL,
+            PUSH_DEVICE_TOKEN = NULL,
+            UPDATED_USER_ID = #{updatedUserId,jdbcType=VARCHAR},
+            UPDATED_DATE = #{updatedDate,jdbcType=TIMESTAMP}
+        </set>
+        WHERE
+            USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
+    </update>
+    <update id="updateToClearOthersToken" parameterType="com.accenture.im.entity.DeviceEntity">
+        UPDATE M_DEVICE
+        <set>
+            AUTH_TOKEN = NULL,
+            AUTH_TOKEN_PUBLISH_DATE = NULL,
+            UPDATED_USER_ID = #{updatedUserId,jdbcType=VARCHAR},
+            UPDATED_DATE = #{updatedDate,jdbcType=TIMESTAMP}
+        </set>
+        WHERE
+            USER_MNG_NO <![CDATA[<>]]> #{userMngNo,jdbcType=VARCHAR}
+            AND DEVICE_ID = #{deviceId,jdbcType=VARCHAR}
+    </update>
+    <delete id="delete" parameterType="com.accenture.im.entity.DeviceEntity">
+        DELETE
+        FROM
+            M_DEVICE
+        WHERE
+            USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
+            AND DEVICE_ID = #{deviceId,jdbcType=VARCHAR}
+    </delete>
+    <delete id="deleteByUser" parameterType="hashMap">
+        DELETE
+        FROM
+            M_DEVICE
+        WHERE
+            USER_MNG_NO = #{userMngNo,jdbcType=VARCHAR}
+    </delete>
+    -->
+</mapper>
